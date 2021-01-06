@@ -8,6 +8,7 @@ from .worker_selection import BeforeBreakpoint
 from .worker_selection import AfterBreakpoint
 from .worker_selection import PoisonerProbability
 import torch.nn.functional as F
+
 import torch
 import json
 
@@ -22,7 +23,7 @@ class Arguments:
 
         self.batch_size = 10
         self.test_batch_size = 1000
-        self.epochs = 1
+        self.epochs = 200
         self.lr = 0.01
         self.momentum = 0.5
         self.cuda = False
@@ -55,9 +56,21 @@ class Arguments:
         # self.net = FashionMNISTResNet
         # self.net = Cifar10ResNet
         # self.net = Cifar100VGG
+        self.dataset_name = 'cifar10'
+        self.train_data_loader_pickle_path = {
+            'cifar10': 'data_loaders/cifar10/train_data_loader.pickle',
+            'fashion-mnist': 'data_loaders/fashion-mnist/train_data_loader.pickle',
+            'cifar100': 'data_loaders/cifar100/train_data_loader.pickle',
+        }
 
-        self.train_data_loader_pickle_path = "data_loaders/cifar10/train_data_loader.pickle"
-        self.test_data_loader_pickle_path = "data_loaders/cifar10/test_data_loader.pickle"
+        self.test_data_loader_pickle_path = {
+            'cifar10': 'data_loaders/cifar10/test_data_loader.pickle',
+            'fashion-mnist': 'data_loaders/fashion-mnist/test_data_loader.pickle',
+            'cifar100': 'data_loaders/cifar100/test_data_loader.pickle',
+        }
+
+        # self.train_data_loader_pickle_path = "data_loaders/cifar10/train_data_loader.pickle"
+        # self.test_data_loader_pickle_path = "data_loaders/cifar10/test_data_loader.pickle"
 
         # self.train_data_loader_pickle_path = "data_loaders/fashion-mnist/train_data_loader.pickle"
         # self.test_data_loader_pickle_path = "data_loaders/fashion-mnist/test_data_loader.pickle"
@@ -92,17 +105,28 @@ class Arguments:
     def get_epoch_save_end_suffix(self):
         return self.epoch_save_end_suffix
 
-    def set_train_data_loader_pickle_path(self, path):
-        self.train_data_loader_pickle_path = path
+    def set_train_data_loader_pickle_path(self, path, name='cifar10'):
+        self.train_data_loader_pickle_path[name] = path
 
     def get_train_data_loader_pickle_path(self):
-        return self.train_data_loader_pickle_path
+        return self.train_data_loader_pickle_path[self.dataset_name]
 
-    def set_test_data_loader_pickle_path(self, path):
-        self.test_data_loader_pickle_path = path
+    def set_test_data_loader_pickle_path(self, path, name='cifar10'):
+        self.test_data_loader_pickle_path[name] = path
 
     def get_test_data_loader_pickle_path(self):
-        return self.test_data_loader_pickle_path
+        return self.test_data_loader_pickle_path[self.dataset_name]
+
+    def set_net_by_name(self, name: str):
+        net_dict = {
+            'cifar10-cnn': Cifar10CNN,
+            'fashion-mnist-cnn': FashionMNISTCNN,
+            'cifar100-resnet': Cifar100ResNet,
+            'fashion-mnist-resnet': FashionMNISTResNet,
+            'cifar10-resnet': Cifar10ResNet,
+            'cifar100-vgg': Cifar100VGG,
+        }
+        self.net = net_dict[name]
 
     def get_cuda(self):
         return self.cuda
@@ -233,4 +257,5 @@ class Arguments:
                "Test Data Loader Path: {}\n".format(self.test_data_loader_pickle_path) + \
                "Loss Function: {}\n".format(self.loss_function) + \
                "Default Model Folder Path: {}\n".format(self.default_model_folder_path) + \
-               "Data Path: {}\n".format(self.data_path)
+               "Data Path: {}\n".format(self.data_path) + \
+               "Dataset Name: {}\n".format(self.dataset_name)

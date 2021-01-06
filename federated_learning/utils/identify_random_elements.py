@@ -1,6 +1,8 @@
 import random
+from typing import List
 
-def identify_random_elements(max, num_random_elements):
+
+def identify_random_elements(max, num_random_elements) -> List[int]:
     """
     Picks a specified number of random elements from 0 - max.
 

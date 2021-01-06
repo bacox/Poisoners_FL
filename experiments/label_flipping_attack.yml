@@ -1,0 +1,20 @@
+# Experiment description
+exp_name: label-flipping-attack
+
+# Settings from label_flipping_attack.py
+start_exp_id: 500
+num_exp: 1
+num_poisoned_workers: 2
+replacement_method: replace_4_with_6
+client_selection_strategy: RandomSelectionStrategy
+KWARGS:
+  NUM_WORKERS_PER_ROUND: 2
+
+# Variables
+variables:
+  datasets: [fashion-mnist, cifar10]
+  networks: [cnn, resnet]
+  # Percentage of poisoners
+  percentages: [0.2, 0, 0.2, 0.4]
+  effort: [half, full]
+  measurements: [Influence, Shapley]

@@ -1,4 +1,4 @@
-def generate_experiment_ids(start_idx, num_exp):
+def generate_experiment_ids(start_idx, num_exp, exp_prefix: str = ''):
     """
     Generate the filenames for all experiment IDs.
 
@@ -13,11 +13,12 @@ def generate_experiment_ids(start_idx, num_exp):
     worker_selections_files = []
 
     for i in range(num_exp):
-        idx = str(start_idx + i)
+        idx = start_idx + i
+        exp_name = f'{exp_prefix}_{idx}'
 
-        log_files.append("logs/" + idx + ".log")
-        results_files.append(idx + "_results.csv")
-        models_folders.append(idx + "_models")
-        worker_selections_files.append(idx + "_workers_selected.csv")
+        log_files.append(f'logs/{exp_name}.log')
+        results_files.append(f'{exp_name}_results.csv')
+        models_folders.append(f'{exp_name}_models')
+        worker_selections_files.append(f'{exp_name}_workers_selected.csv')
 
     return log_files, results_files, models_folders, worker_selections_files

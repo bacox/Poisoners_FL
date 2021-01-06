@@ -115,8 +115,8 @@ def run_machine_learning(clients, args, poisoned_workers):
     return convert_results_to_csv(epoch_test_set_results), worker_selection
 
 
-def run_exp(replacement_method, num_poisoned_workers, KWARGS, client_selection_strategy, idx):
-    log_files, results_files, models_folders, worker_selections_files = generate_experiment_ids(idx, 1)
+def run_exp(replacement_method, num_poisoned_workers, KWARGS, client_selection_strategy, idx, exp_name='', **kkwargs):
+    log_files, results_files, models_folders, worker_selections_files = generate_experiment_ids(idx, 1, exp_prefix=exp_name)
 
     # Initialize logger
     handler = logger.add(log_files[0], enqueue=True)
@@ -126,6 +126,16 @@ def run_exp(replacement_method, num_poisoned_workers, KWARGS, client_selection_s
     args.set_num_poisoned_workers(num_poisoned_workers)
     args.set_round_worker_selection_strategy_kwargs(KWARGS)
     args.set_client_selection_strategy(client_selection_strategy)
+    args.dataset_name = kkwargs['datasets']
+    network_name = f'{kkwargs["datasets"]}-{kkwargs["networks"]}'
+    args.set_net_by_name(network_name)
+
+    args.contribution_measurement_metric = kkwargs['measurements']
+    args.get_poison_effort = kkwargs['effort']
+
+    args.set_num_poisoned_workers( int(args.get_num_workers() * kkwargs['percentages']))
+    # End of setting parameters
+
     args.log()
 
     train_data_loader = load_train_data_loader(logger, args)
